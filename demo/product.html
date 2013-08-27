@@ -1,0 +1,14 @@
+<header><%=obj.header%><span class="back">BACK</span></header>
+<section>
+	<%
+		var i = 0,
+			l = obj.pro.length,
+			temp = null;
+		for (i; i < l; i++) {
+			temp = obj.pro[i];
+	%>
+		<div class="pro-<%=temp.id%>"><a href="#product-detail?id=<%=temp.id%>"><%=temp.name%></a></div>
+	<%
+		}
+	%>
+</section>

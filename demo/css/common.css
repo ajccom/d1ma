@@ -1,0 +1,16 @@
+.D1maTempPage {display: none; width: 100%; height: 100%; position: absolute; left: 0; top: 0; z-index: 1;}
+.D1maTempPage.current {display: block;}
+.D1maTempPage.prev-page {display: block; z-index: 1}
+.D1maTempPage.normal.prev-page {display: none}/*if not use effect*/
+.D1maTempPage.current {z-index: 2;}
+
+
+
+
+
+
+
+
+
+
+
