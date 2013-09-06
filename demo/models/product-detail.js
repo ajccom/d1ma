@@ -8,7 +8,6 @@ D1ma.model['product-detail'] = {
 		if (l > 0) {
 			for (i; i < l; i++) {
 				if (products[i].id === D1ma.getQuery('id')) {
-					console.log(products[i].id);
 					this.data = {name: products[i].name}
 					break;
 				}
@@ -16,6 +15,8 @@ D1ma.model['product-detail'] = {
 		} else {
 			this.data = {name: 'not find'}
 		}
+		
+		D1ma.updateIncludePage('header', {header: this.data.name});
 	},
 	load: function () {
 		//alert('product load');

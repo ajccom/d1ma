@@ -1,12 +1,11 @@
-D1ma.model['more'] = {
+D1ma.model['header'] = $.extend({
 	data: {
-		header: 'MORE'
+		header: 'D1MA'
 	},
 	beforeload: function () {
 		//alert('more beforeload');
-		D1ma.updateIncludePage('header', {header: 'More'});
 	},
 	load: function () {
 		//alert('more load');
 	}
-};
+}, D1ma.model['header'] || {});

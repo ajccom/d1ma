@@ -5,6 +5,7 @@ D1ma.model['home'] = {
 	},
 	beforeload: function () {
 		//alert('home beforeload');
+		D1ma.updateIncludePage('header', {header: 'Home'});
 	},
 	load: function () {
 		//alert('home load');

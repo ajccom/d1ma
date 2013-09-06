@@ -5,6 +5,7 @@ D1ma.model['product'] = {
 	},
 	beforeload: function () {
 		//alert('product beforeload');
+		D1ma.updateIncludePage('header', {header: 'Product'});
 	},
 	load: function () {
 		//alert('product load');
