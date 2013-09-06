@@ -114,23 +114,23 @@ refresh block included in current page.
 
 model will be loaded when sub page's HTML be load.
 
-you should create your sub pages' model files in `modelPath` defined in D1ma.config.
+you should new a model in your sub pages' model files defined in D1ma.config.
 
 for example, in your model `home.js` , it will look like:
 
 ```
-	D1ma.model['home'] = {
+	new D1ma.ViewModel('home', {
 		data: {
-			section: 'Section Text',
-			header: 'HOME'
+			section: 'Section Text'
 		},
 		beforeload: function () {
 			//alert('home beforeload');
+			D1ma.updateIncludePage('header', {header: 'Home'});
 		},
 		load: function () {
 			//alert('home load');
 		}
-	};
+	});
 ```
 If you don't want to model, just do nothing.
 

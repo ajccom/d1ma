@@ -1,4 +1,4 @@
-D1ma.model['header'] = $.extend({
+new D1ma.ViewModel('header', {
 	data: {
 		header: 'D1MA'
 	},
@@ -8,4 +8,4 @@ D1ma.model['header'] = $.extend({
 	load: function () {
 		//alert('more load');
 	}
-}, D1ma.model['header'] || {});
+});

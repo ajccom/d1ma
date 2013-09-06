@@ -1,4 +1,4 @@
-D1ma.model['more'] = {
+new D1ma.ViewModel('more', {
 	data: {
 		header: 'MORE'
 	},
@@ -9,4 +9,4 @@ D1ma.model['more'] = {
 	load: function () {
 		//alert('more load');
 	}
-};
+});

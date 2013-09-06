@@ -1,4 +1,4 @@
-D1ma.model['home'] = {
+new D1ma.ViewModel('home', {
 	data: {
 		section: 'Section Text',
 		header: 'HOME'
@@ -10,4 +10,4 @@ D1ma.model['home'] = {
 	load: function () {
 		//alert('home load');
 	}
-};
+});

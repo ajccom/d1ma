@@ -1,6 +1,6 @@
-D1ma.model['product-detail'] = {
+new D1ma.ViewModel('product-detail', {
 	beforeload: function () {
-		var products = D1ma.model['product'] ? (D1ma.model['product'].data.pro || []) : [],
+		var products = D1ma.model['product'] ? (D1ma.model['product'].getData().pro || []) : [],
 			i = 0,
 			l = products.length,
 			temp = [];
@@ -21,4 +21,4 @@ D1ma.model['product-detail'] = {
 	load: function () {
 		//alert('product load');
 	}
-};
+});

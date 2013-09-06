@@ -4,8 +4,8 @@
 *	136157536@qq.com
 */
 /*
-			 ____     _____    ___  ____
-			/ _  \   |_   /   /   \/    |
+			 ____     ____     ___  ____
+			/ _  \   |_   |   /   \/    |
 		   / /_/ /    /  /   /  /\__/|  |
 		  |_____/    |__/   |__/     |__|
 													ajccom
@@ -118,14 +118,14 @@
 	*/
 	D1ma.include = function (hash) {
 		var html = '',
-			d = {},
+			d = '',
 			routeObj = null;
 						
 		if (D1ma.templates[hash]) {
 			html = D1ma.templates[hash];
-			d = D1ma.model[hash] || {};
+			d = D1ma.model[hash].getHtml();
 			D1ma.isInclude = false;
-			return '<div data-hash="' + hash + '" class="D1maInculdePart D1maInculdeWrapper-' + hash + '">' + D1ma.replace(html, d.data || {}) + '</div>';
+			return '<div data-hash="' + hash + '" class="D1maInculdePart D1maInculdeWrapper-' + hash + '">' + d + '</div>';
 		} else {
 			routeObj = D1ma.route.get(hash);
 			$('body').append('<script src="' + D1ma.config.modelPath + hash + '.js?v=' + +new Date() + '"></script>');
@@ -137,8 +137,8 @@
 				success: function (html) {
 					var d = null;
 					D1ma.templates[hash] = html;
-					d = D1ma.model[hash] ? (D1ma.model[hash].data || {}) : {};
-					D1ma.includedHtml[hash] = D1ma.replace(html, d);
+					d = D1ma.model[hash].getHtml();
+					D1ma.includedHtml[hash] = d;
 				},
 				error: function () {
 					$('.D1maInculdeWrapper-' + hash).remove();
@@ -167,6 +167,7 @@
 	
 		var routeObj = D1ma.route.get(hash);
 		var obj = null;
+		var d = D1ma.model[hash] ? D1ma.model[hash].getModel() : {};
 		if (location.hash !== '#' + hash) {
 			location.hash = '#' + hash;
 		}
@@ -175,7 +176,6 @@
 		}
 		
 		hash = hash.split('?')[0];
-		D1ma.model[hash] = D1ma.model[hash] || {};
 		
 		if (!$('.D1maTempPage.sub-page-' + hash)[0]) {
 			obj = $('<div class="D1maTempPage ' + D1ma.currentEffect + '"></div>');
@@ -205,8 +205,7 @@
 				}
 			});
 		} else {
-			var html = D1ma.templates[hash],
-				d = D1ma.model[hash];
+			var html = D1ma.templates[hash];
 			D1ma.currentPage = obj = $('.D1maTempPage.sub-page-' + hash);
 			
 			if (routeObj.callback) {
@@ -224,7 +223,7 @@
 	*	tranform template to html
 	*/
 	D1ma.handlePageData = function (hash, html, isNoEffect) {
-		var d = D1ma.model[hash] ? (D1ma.model[hash] || {}) : {},
+		var d = D1ma.model[hash] ? D1ma.model[hash].getModel() : {},
 			obj = D1ma.currentPage;
 		
 		if (d.beforeload) {
@@ -265,7 +264,7 @@
 		for (hash in obj) {
 			if (obj[hash] !== '') {
 				routeObj = D1ma.route.get(hash);
-				d = D1ma.model[hash] ? (D1ma.model[hash].data || {}) : {};
+				d = D1ma.model[hash] ? D1ma.model[hash].getModel() : {};
 				if (routeObj.callback) {
 					routeObj.callback(html);
 				}
@@ -273,6 +272,7 @@
 				if (d.beforeload) {
 					d.beforeload();
 				}
+				
 				D1ma.currentPage.find('.D1maInculdeWrapper-' + hash).html(obj[hash]).show();
 				if (d.load) {
 					d.load();
@@ -293,8 +293,8 @@
 	D1ma.updatePage = function () {
 		var hash = location.hash.slice(1).split('?')[0],
 			routeObj = D1ma.route.get(hash),
-			html = D1ma.templates[hash],
-			d = D1ma.model[hash] || {};
+			html = D1ma.model[hash] ? D1ma.model[hash].getTemplate() : '',
+			d = D1ma.model[hash] ? D1ma.model[hash].getData() : {};
 		
 		if (routeObj.callback) {
 			routeObj.callback(html);
@@ -307,28 +307,25 @@
 	*	update current page included HTML
 	*/
 	D1ma.updateIncludePage = function (hash, arg) {
-		var part = D1ma.currentPage.find('.D1maInculdeWrapper-' + hash),
-			data = D1ma.model[hash] ? D1ma.model[hash].data : {},
-			html = D1ma.templates[hash] || '';
-		if (!D1ma.model[hash]) {
-			D1ma.model[hash] = {data: arg};
+		if (D1ma.model[hash]) {
+			var part = D1ma.currentPage.find('.D1maInculdeWrapper-' + hash),
+				data = D1ma.model[hash] ? D1ma.model[hash].getData : {},
+				html = D1ma.model[hash] ? D1ma.model[hash].getTemplate() : '';
+			if (!html) {return}
+			data = $.extend(data, arg);
+			part.html(D1ma.replace(html, data));
+			D1ma.model[hash].setData(arg);
+		} else {
+			setTimeout(function () {
+				D1ma.updateIncludePage(hash, arg);
+			}, 15);
 		}
-		if (!html) {return}
-		data = $.extend(data, arg);
-		part.html(D1ma.replace(html, data));
-		console.log(D1ma.currentPage.find('.D1maInculdeWrapper-' + hash));
 	};
 	
 	/**
 	* model object
 	*/
-	D1ma.model = {
-		/*hash: {
-			data: {username: 'Jian' ...},// replace <%=username %> to Jian
-			beforeload: function () {},
-			load: {}
-		}*/
-	};
+	D1ma.model = {};
 
 	/**
 	*	set hash change event
@@ -370,39 +367,40 @@
 	};
 	
 	/**
-	*	Class D1ma.Model
+	*	Class D1ma.ViewModel
 	*/
-	D1ma.ViewModel = function (hash, cfg) {
+	D1ma.ViewModel = function (hash, arg) {
 		this.hash = hash;
-		this.cfg = cfg;;
+		this.model = arg;
 		D1ma.model[hash] = this;
 	};
 	
 	D1ma.ViewModel.prototype = {
-		cfg: {},
+		model: {},
 		getHash: function () {
 			return this.hash;
 		},
 		setHash: function (hash) {
 			this.hash = hash;
 		},
-		getCfg: function () {
-			return this.cfg;
+		getModel: function (param) {
+			return param ? this.model[param] : this.model;
 		},
-		setCfg: function (cfg) {
-			this.cfg = $.extend(this.cfg, cfg);
+		setModel: function (model) {
+			this.model = $.extend(this.model, model);
 			this.updatePage();
 		},
 		setData: function (arg) {
-			if (this.cfg.data) {
-				this.cfg.data = $.extend(this.cfg.data, arg);
+			if (this.model.data) {
+				this.model.data = $.extend(this.model.data, arg);
 			} else {
-				this.cfg.data = arg;
+				this.model.data = arg;
 			}
 			this.updatePage();
 		},
-		getData: function () {
-			return this.cfg.data || {};
+		getData: function (param) {
+			if (!this.model || !this.model.data) {return {};}
+			return param ? this.model.data[param] : this.model.data;
 		},
 		getTemplate: function () {
 			return this.template || D1ma.templates[this.hash];
@@ -412,23 +410,23 @@
 			isUpdate && this.updatePage();
 		},
 		getHtml: function () {
-			return D1ma.replace(this.template || D1ma.templates[this.hash], this.cfg.data || {});
+			return D1ma.replace(this.template || D1ma.templates[this.hash] || '', this.model.data || {});
 		},
 		getBlock: function () {
-			var page = $('.D1maTempPage.sub-page-' + hash),
-				block = page ? (page.hasClass('current') ? page : D1ma.currentPage.find('.D1maInculdeWrapper-' + hash)) : D1ma.currentPage.find('.D1maInculdeWrapper-' + hash);
+			var page = $('.D1maTempPage.sub-page-' + this.hash),
+				block = page ? (page.hasClass('current') ? page : D1ma.currentPage.find('.D1maInculdeWrapper-' + this.hash)) : D1ma.currentPage.find('.D1maInculdeWrapper-' + this.hash);
 			return block;
 		},
 		updatePage: function () {//update all blocks in current page but trigger load event & beforeload event only once
 			var block = this.getBlock(),
 				html = this.getHtml();
 			if (!block[0]) {return}
-			if (this.cfg.beforeload) {
-				this.cfg.beforeload();
+			if (this.model.beforeload) {
+				this.model.beforeload();
 			}
 			block.html(html);
-			if (this.cfg.load) {
-				this.cfg.load();
+			if (this.model.load) {
+				this.model.load();
 			}
 		}
 	};

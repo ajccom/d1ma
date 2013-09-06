@@ -1,5 +1,11 @@
-D1ma.model['welcome'] = $.extend({
+new D1ma.ViewModel('welcome', {
 	data: {
-		welcome: 'included page: welcome'
+		welcome: 'included html: welcome'
+	},
+	beforeload: function () {
+		//alert('more beforeload');
+	},
+	load: function () {
+		//alert('more load');
 	}
-}, D1ma.model['welcome'] || {});
+});
