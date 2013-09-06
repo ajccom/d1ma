@@ -103,6 +103,13 @@ if you want to load one sub page, you can
 ```
 refresh current page with last model.
 
+##D1ma.updateIncludePage
+
+```
+	D1ma.updateIncludePage('hash', {text: 'included block update'});
+```
+refresh block included in current page.
+
 ##Model
 
 model will be loaded when sub page's HTML be load.
