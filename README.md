@@ -101,7 +101,7 @@ if you want to load one sub page, you can
 ```
 	D1ma.updatePage();
 ```
-refresh current page with last model.
+refresh current page with latest model.
 
 ##D1ma.updateIncludePage
 
