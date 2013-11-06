@@ -134,7 +134,9 @@ For example, in your model `home.js` , it will look like:
 		}
 	});
 ```
+
 If you don't want to use model, just do nothing.
+
 *You shouldn't use a global variable to named your model, every page's model will be visited in D1ma.model['hash']*
 
 ###Model Object
@@ -142,55 +144,69 @@ If you don't want to use model, just do nothing.
 ####getHash
 
 `modelObject.getHash();`
+
 return model's hash, sometime it looks like model's name.
 
 ####getModel
 
 `modelObject.getModel();`
+
 `modelObject.getModel('load');`
+
 Return model or one model's property. 
 
 ####setModel
 
 `modelObject.setModel({data: {...}, load: function () {}, ...);`
+
 Set model's data & events;
+
 *this function will update HTML immediately*
 
 ####setData
 
 `modelObject.setModel({...});`
+
 Set model's data;
+
 *this function will update HTML immediately*
 
 ####getData
 
 `modelObject.getData();`
+
 `modelObject.getData('text');`
+
 Return model's data or one data's property. 
 
 ####getTemplate
 
 `modelObject.getTemplate();`
+
 Return model's HTML Template.
 
 ####setTemplate
 
 `modelObject.getTemplate('str str str...');`
+
 Set model's new HTML Template.
 
 ####getHtml
 
 `modelObject.getHtml();`
+
 Return HTML String form explained template.
 
 ####getBlock
 
 `modelObject.getBlock();`
+
 Return DOM Element in Main DOM Tree.
 
 ####updatePage
 
 `modelObject.updatePage();`
+
 Refresh model's template in page.
 
 ##D1ma.effect
@@ -221,8 +237,28 @@ D1ma just defined one effect to all sub pages.
 So if you want exchange effect, you should set `D1ma.currentEffect` to which one you wanted.
 
 ## License
+The MIT License (MIT)
 
-@ @
+Copyright (c) 2013 ajccom
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 
 ## ¾èÔù
 Èç¹ûÄú¾õµÃÕâ¶ÔÄúÓÐ°ïÖú£¬»¶Ó­ÇëajccomºÈÒ»±­¿§·È
