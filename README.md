@@ -1,53 +1,64 @@
 #D1ma - build one-page site so easy
 
-This is a tool be used to build one-page site. It works for mobile website and hybird mobile application.
+This is a framework used to build one-page application. It works for mobile website and hybird mobile application.
 
 ##Install
 
-D1ma is a framework based on `jQuery`. So you should include `D1ma.js` after the jQuery file.
+Just include `D1ma.js` after your jQuery file.
 
 ##Config
 
 ```
 	pageWrapperId: 'page-wrapper',
-	// one element's id, D1ma will push all sub pages into this element. if not defined, D1ma will push all sub pages to body element.
-	modelPath: 'models/',//sub pages model path
-	htmlPath: '',//sub pages path
-	defaultHash: 'home'//your application's first page
+	modelPath: 'models/',
+	htmlPath: '',
+	defaultHash: 'home'
 ```
+
+`pageWrapperId` tell D1ma which DOM Element that pages appended to.
+
+`modelPath` tell D1ma models' local path
+
+`htmlPath` tell D1ma views' local path
+
+`defaultHash` tell D1ma which page is default page
 
 ##D1ma.route
 
-	controls hash to load which one of sub pages. If not defined, D1ma will load [hash + `.html`].
+Define a hash binding to a page in views. If not defined, D1ma will load file in `D1ma.config.htmlPath + [hash + '.html']`.
 
 ###set
 
 ```
 	D1ma.route.set('index', 'home.html', function () {/*some code*/});
 ```
-set hash & route, and there is a callback you can set to trigger before model's event.
+Set hash & route, and there is a callback function that will be exec before model's `beforeload` event.
 	
 ###del
 
 ```
 	D1ma.route.del('index');
 ```
-del rule of hash & route.
+Delete relation of hash & route.
 
 ###get
 
 ```
 	D1ma.route.get('index');
 ```
-return an object with route & callback.
+Return an object with route & callback.
 
-##Template Rule
+##Template
 	
-###output model data
+###output rule
 
 ```
-	<p><%=obj.name%></p> //model = {name: 'Jone'} and then will output HTML <p>Jone</p>
+	<p><%=obj.name%></p>
 ```
+
+Write your script in `<%` and `%>` tag.
+
+And if `modelObject.data = {name: 'Jone'}` then D1ma will output HTML `<p>Jone</p>`.
 
 ###use if-else
 
@@ -60,7 +71,7 @@ return an object with route & callback.
 		}
 	%>
 ```
-also `for`, `switch`, `with` you can use
+Also `for`, `switch`, `with` ... , you can use.
 
 
 ###use function
@@ -69,28 +80,29 @@ also `for`, `switch`, `with` you can use
 	<p><%=Math.random()%></p>
 ```
 
-###include
+D1ma use whole logic template engine, so you can use all javascript API in template.
 
-do you want to include one sub page to another one? Yes, you can.
+###include sub page
+
+Do you want to include a sub page?
 
 ```
-	<div><%=D1ma.include('HashName')%></div>//will include which 'HashName' defined in D1ma.route or 'HashName.html'.
+	<div><%=D1ma.include('HashName')%></div>
 ```
-	
-In your sub page, you should use `template rule` to fill your data with model.
+D1ma will include the template which 'HashName' defined in D1ma.route or just use html path + 'HashName.html'.
 	
 ##D1ma.getPage
 	
 ```
 	var jIndexObj = D1ma.getPage('index');
 ```
-return a jQuery Object of sub page's wrapper.
-	
-##D1ma.load
-	
-handel load sub pages.
+Return a jQuery Object of sub page's wrapper.
 
-if you want to load one sub page, you can
+##D1ma.load
+
+Handle load pages to application or just show current page.
+
+If you want to load one page, you can
 
 ```
 	D1ma.load('hash');
@@ -101,17 +113,18 @@ if you want to load one sub page, you can
 ```
 	D1ma.updatePage();
 ```
-refresh current page with latest model.
+
+Refresh current page with latest model.
 
 ##D1ma.updateIncludePage
 
 ```
-	D1ma.updateIncludePage('hash', {text: 'included block update'});
+	D1ma.updateIncludePage('hash', {text: 'included page update'});
 ```
-refresh block included in current page.
 
-*when use updateIncludePage, there will be triggered included page's beforeload\load event defaulted in module and not only change HTML.*
+Refresh included page in current page.
 
+*If use updateIncludePage, there will be triggered included page's beforeload\load event defined in model and not just change HTML.*
 
 ##ViewModel
 
@@ -146,7 +159,7 @@ If you don't want to use model, just do nothing.
 
 `modelObject.getHash();`
 
-return model's hash, sometime it looks like model's name.
+Return model's hash, sometime it looks like model's name.
 
 ####getModel
 
@@ -162,7 +175,7 @@ Return model or one model's property.
 
 Set model's data & events;
 
-*this function will update HTML immediately*
+*This function will update HTML immediately*
 
 ####setData
 
@@ -170,7 +183,7 @@ Set model's data & events;
 
 Set model's data;
 
-*this function will update HTML immediately*
+*This function will update HTML immediately*
 
 ####getData
 
@@ -216,27 +229,21 @@ When sub page exchange to another one, some effects will appear.
 
 ###effect name
 
-####normal
-
-####slide
-
-####fade
-
-####pop
-
-####slidefade
-
-####slidedown
+`normal | slide | fade | pop | slidefade | slidedown`
 
 ###currentEffect
 
 ```
-	D1ma.currentEffect = 'slidedown';
+	D1ma.currentEffect = 'pop';
 ```
 
 D1ma just defined one effect to all sub pages. 
 
-So if you want exchange effect, you should set `D1ma.currentEffect` to which one you wanted.
+If you want exchange effect, you should set `D1ma.currentEffect` when you wanted to change.
+
+##Thanks
+
+Thanks everyone in [Sumai](http://www.sumai100.com) project.
 
 ## License
 The MIT License (MIT)
@@ -260,9 +267,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-
-## ¾èÔù
-Èç¹ûÄú¾õµÃÕâ¶ÔÄúÓÐ°ïÖú£¬»¶Ó­ÇëajccomºÈÒ»±­¿§·È
-
-[![¾èÔù](https://img.alipay.com/sys/personalprod/style/mc/btn-index.png)](https://me.alipay.com/ajccom)
