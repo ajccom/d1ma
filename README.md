@@ -109,14 +109,16 @@ refresh current page with last model.
 	D1ma.updateIncludePage('hash', {text: 'included block update'});
 ```
 refresh block included in current page.
+*when use updateIncludePage, there will be triggered included page's beforeload\load event defaulted in module and not only change HTML.*
 
-##Model
 
-model will be loaded when sub page's HTML be load.
+##ViewModel
 
-you should new a model in your sub pages' model files defined in D1ma.config.
+Every pages' data and events will be defined in its model. 
 
-for example, in your model `home.js` , it will look like:
+You could `new` a ViewModel in your sub pages' model files.
+
+For example, in your model `home.js` , it will look like:
 
 ```
 	new D1ma.ViewModel('home', {
@@ -132,7 +134,64 @@ for example, in your model `home.js` , it will look like:
 		}
 	});
 ```
-If you don't want to model, just do nothing.
+If you don't want to use model, just do nothing.
+*You shouldn't use a global variable to named your model, every page's model will be visited in D1ma.model['hash']*
+
+###Model Object
+
+####getHash
+
+`modelObject.getHash();`
+return model's hash, sometime it looks like model's name.
+
+####getModel
+
+`modelObject.getModel();`
+`modelObject.getModel('load');`
+Return model or one model's property. 
+
+####setModel
+
+`modelObject.setModel({data: {...}, load: function () {}, ...);`
+Set model's data & events;
+*this function will update HTML immediately*
+
+####setData
+
+`modelObject.setModel({...});`
+Set model's data;
+*this function will update HTML immediately*
+
+####getData
+
+`modelObject.getData();`
+`modelObject.getData('text');`
+Return model's data or one data's property. 
+
+####getTemplate
+
+`modelObject.getTemplate();`
+Return model's HTML Template.
+
+####setTemplate
+
+`modelObject.getTemplate('str str str...');`
+Set model's new HTML Template.
+
+####getHtml
+
+`modelObject.getHtml();`
+Return HTML String form explained template.
+
+####getBlock
+
+`modelObject.getBlock();`
+Return DOM Element in Main DOM Tree.
+
+####updatePage
+
+`modelObject.updatePage();`
+Refresh model's template in page.
 
 ##D1ma.effect
 

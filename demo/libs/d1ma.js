@@ -142,7 +142,7 @@
 				},
 				error: function () {
 					$('.D1maInculdeWrapper-' + hash).remove();
-					console.log('error: D1ma.include - ' + D1ma.config.htmlPath + routeObj.route + '.');
+					//console.log('error: D1ma.include - ' + D1ma.config.htmlPath + routeObj.route + '.');
 				}
 			});
 			return '<div data-hash="' + hash + '" class="D1maInculdePart D1maInculdeWrapper-' + hash + '" style="display: none">' + hash + '</div>';
@@ -164,13 +164,14 @@
 	*	if loaded, use loaded template
 	*/
 	D1ma.load = function (hash) {
-	
+		
 		var routeObj = D1ma.route.get(hash);
 		var obj = null;
 		var d = D1ma.model[hash] ? D1ma.model[hash].getModel() : {};
 		if (location.hash !== '#' + hash) {
 			location.hash = '#' + hash;
 		}
+		if (!D1ma.isBack) {D1ma.historyHandler.history.push(hash)};
 		if (D1ma.currentPage) {
 			D1ma.prevPage = D1ma.currentPage.removeClass('current').addClass('prev-page');
 		}
@@ -201,7 +202,7 @@
 					
 				},
 				error: function () {
-					console.log('error: D1ma.load - ' + D1ma.config.htmlPath + routeObj.route + '.');
+					//console.log('error: D1ma.load - ' + D1ma.config.htmlPath + routeObj.route + '.');
 				}
 			});
 		} else {
@@ -211,9 +212,7 @@
 			if (routeObj.callback) {
 				routeObj.callback(html);
 			}
-			
 			obj.html('<div class="D1maPageLoading">loading...</div>');
-
 			D1ma.handlePageData(hash, html);
 		}
 		D1ma.isBack = 0;
@@ -379,23 +378,18 @@
 		getHash: function () {
 			return this.hash;
 		},
-		setHash: function (hash) {
-			this.hash = hash;
-		},
 		getModel: function (param) {
 			return param ? this.model[param] : this.model;
 		},
 		setModel: function (model) {
 			this.model = $.extend(this.model, model);
 			this.updatePage();
+			return this;
 		},
 		setData: function (arg) {
-			if (this.model.data) {
-				this.model.data = $.extend(this.model.data, arg);
-			} else {
-				this.model.data = arg;
-			}
+			this.model.data = $.extend(this.model.data || {}, arg || {});
 			this.updatePage();
+			return this;
 		},
 		getData: function (param) {
 			if (!this.model || !this.model.data) {return {};}
@@ -407,6 +401,7 @@
 		setTemplate: function (html, isUpdate) {
 			this.template = html;
 			isUpdate && this.updatePage();
+			return this;
 		},
 		getHtml: function () {
 			return D1ma.replace(this.template || D1ma.templates[this.hash] || '', this.model.data || {});
@@ -427,9 +422,38 @@
 			if (this.model.load) {
 				this.model.load();
 			}
+			return this;
 		}
 	};
 	
+	/**
+	*	D1ma.historyHandler
+	*/
+	D1ma.historyHandler = {
+		isUseHash: true,
+		getHash: function () {
+			var arr = this.history,
+				l = arr.length;
+			return this.isUseHash ? location.hash : arr[l - 1];
+		},
+		goBack: function () {
+			var arr = this.history,
+				l = arr.length;
+			D1ma.isBack = 1;
+			if (this.isUseHash) {
+				history.go(-1);
+			} else {
+				if (arr[l - 2]) {
+					D1ma.load(arr[l - 2]);
+					arr.pop();
+				}
+			}
+		},
+		setHash: function (str) {
+			this.history.push(str);
+		},
+		history: []
+	};
 	
 	D1ma.currentPage = null; //jQuery Object, current show page
 
