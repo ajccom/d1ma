@@ -109,6 +109,7 @@ refresh current page with latest model.
 	D1ma.updateIncludePage('hash', {text: 'included block update'});
 ```
 refresh block included in current page.
+
 *when use updateIncludePage, there will be triggered included page's beforeload\load event defaulted in module and not only change HTML.*
 
 
@@ -234,6 +235,7 @@ When sub page exchange to another one, some effects will appear.
 ```
 
 D1ma just defined one effect to all sub pages. 
+
 So if you want exchange effect, you should set `D1ma.currentEffect` to which one you wanted.
 
 ## License
