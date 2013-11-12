@@ -12,7 +12,7 @@
 */
 
 (function ($) {
-
+	
 	var D1ma = D1ma || {};
 
 	D1ma.config = {
@@ -41,7 +41,7 @@
 		var search = location.hash.split('?')[1].replace(/&+$/, '').split('&'),
 			temp = '',
 			data = {};
-		jQuery.each(search, function(i, n) {
+		$.each(search, function(i, n) {
 			temp = n.split('=');
 			if (temp[0]) {
 				data[decodeURIComponent(temp[0]).toLowerCase()] = decodeURIComponent(temp[1]);
@@ -120,7 +120,6 @@
 		var html = '',
 			d = '',
 			routeObj = null;
-						
 		if (D1ma.templates[hash]) {
 			html = D1ma.templates[hash];
 			d = D1ma.model[hash].getHtml();
@@ -128,23 +127,28 @@
 			return '<div data-hash="' + hash + '" class="D1maInculdePart D1maInculdeWrapper-' + hash + '">' + d + '</div>';
 		} else {
 			routeObj = D1ma.route.get(hash);
-			$('body').append('<script src="' + D1ma.config.modelPath + hash + '.js?v=' + +new Date() + '"></script>');
+			var script = document.createElement('script');
 			D1ma.includedHtml[hash] = '';
-			$.ajax({
-				type: 'GET',
-				dataType: 'html',
-				url: D1ma.config.htmlPath + routeObj.route + '?v=' + +new Date(),
-				success: function (html) {
-					var d = null;
-					D1ma.templates[hash] = html;
-					d = D1ma.model[hash].getHtml();
-					D1ma.includedHtml[hash] = d;
-				},
-				error: function () {
-					$('.D1maInculdeWrapper-' + hash).remove();
-					//console.log('error: D1ma.include - ' + D1ma.config.htmlPath + routeObj.route + '.');
-				}
-			});
+			script.onload = function () {
+				$.ajax({
+					type: 'GET',
+					dataType: 'html',
+					url: D1ma.config.htmlPath + routeObj.route + '?v=' + +new Date(),
+					success: function (html) {
+						var d = null;
+						D1ma.templates[hash] = html;
+						d = D1ma.model[hash].getHtml();
+						D1ma.includedHtml[hash] = d;
+					},
+					error: function () {
+						$('.D1maInculdeWrapper-' + hash).remove();
+						//console.log('error: D1ma.include - ' + D1ma.config.htmlPath + routeObj.route + '.');
+					}
+				});
+			}
+			
+			script.src = D1ma.config.modelPath + hash + '.js?v=' + +new Date();
+			document.body.appendChild(script);
 			return '<div data-hash="' + hash + '" class="D1maInculdePart D1maInculdeWrapper-' + hash + '" style="display: none">' + hash + '</div>';
 		}
 	};
@@ -193,13 +197,18 @@
 					obj.addClass('sub-page-' + hash);
 					
 					obj.html('<div class="D1maPageLoading">loading...</div>');
-					
-					//var n = +new Date();
-					$('body').append('<script src="' + D1ma.config.modelPath + hash + '.js?v=' + +new Date() + '"></script>');
 
+					//var n = +new Date();
+					//When use Zepto, body.append('<script src="xxx.js"></script>') is no effect.
+					var script = document.createElement('script');
 					//alert(+new Date() - n); //10-15ms :)
-					D1ma.handlePageData(hash, html);
 					
+					script.onload = function () {
+						D1ma.handlePageData(hash, html);
+					}
+					
+					script.src = D1ma.config.modelPath + hash + '.js?v=' + +new Date();
+					document.body.appendChild(script);
 				},
 				error: function () {
 					//console.log('error: D1ma.load - ' + D1ma.config.htmlPath + routeObj.route + '.');
@@ -224,11 +233,9 @@
 	D1ma.handlePageData = function (hash, html, isNoEffect) {
 		var d = D1ma.model[hash] ? D1ma.model[hash].getModel() : {},
 			obj = D1ma.currentPage;
-		
 		if (d.beforeload) {
 			d.beforeload();
 		}
-		
 		html = D1ma.replace(html, d.data || {});
 		
 		!isNoEffect && D1ma.effect.run();
@@ -276,7 +283,6 @@
 					d.load();
 				}
 				delete obj[hash];
-				
 			} else {
 				setTimeout(function () {
 					D1ma.appendIncludeHtml();
@@ -304,18 +310,26 @@
 	/**
 	*	update current page included HTML
 	*/
-	D1ma.updateIncludePage = function (hash, arg) {
+	D1ma.updateIncludePage = function (hash, arg, callback) {
 		if (D1ma.model[hash]) {
 			var part = D1ma.currentPage.find('.D1maInculdeWrapper-' + hash),
-				data = D1ma.model[hash] ? D1ma.model[hash].getData : {},
+				data = D1ma.model[hash] ? D1ma.model[hash].getData() : {},
 				html = D1ma.model[hash] ? D1ma.model[hash].getTemplate() : '';
-			if (!html) {return}
+			if (!html) {
+				setTimeout(function () {
+					D1ma.updateIncludePage(hash, arg, callback);
+				}, 15);
+				return
+			}
 			data = $.extend(data, arg);
 			part.html(D1ma.replace(html, data));
-			D1ma.model[hash].setData(arg);
+			D1ma.model[hash].setData(data);
+			if (callback) {
+				callback();
+			}
 		} else {
 			setTimeout(function () {
-				D1ma.updateIncludePage(hash, arg);
+				D1ma.updateIncludePage(hash, arg, callback);
 			}, 15);
 		}
 	};
@@ -515,4 +529,4 @@
 	D1ma.hashHandler.ini();
 
 	window.D1ma = D1ma;
-}(jQuery));
+}(window.Zepto || window.jQuery));

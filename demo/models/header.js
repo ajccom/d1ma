@@ -6,6 +6,6 @@ new D1ma.ViewModel('header', {
 		//alert('more beforeload');
 	},
 	load: function () {
-		//alert('more load');
+		//console.log(D1ma.model.header.getTemplate());
 	}
 });
